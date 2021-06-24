@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react'
 
-const App = () => {
+const tasksForm = () => {
   return (
     <Fragment>
 
@@ -8,4 +8,4 @@ const App = () => {
   )
 }
 
-export default App;
+export default tasksForm;
