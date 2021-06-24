@@ -36,7 +36,6 @@ const TasksForm = () => {
 };
 
 export default TasksForm;
-
 ```
 
 7. I execute`yarn start` in terminal to be able to see in browser how the app does in live. 
@@ -57,8 +56,6 @@ const App = () => {
 };
 
 export default App;
-
-
 ```
 
 In browser we can see something like this, by the moment:
@@ -69,12 +66,8 @@ In browser we can see something like this, by the moment:
 
 ### Introduction
 
-9. I was Thinking about forms in React. Is not like in Javascript. 
-   
-   In Javascript we usually use variables assigning them the value of the input text doing something like this: 
-   `let v=document.getElementById("whatever").value`. 
-   
-   But in React getting values from a form requires working in a different way.  When put ***value*** as usual we did in order to get the value by our JavaScript as follows...
+9. I was Thinking about forms in React. Is not like in Javascript. In Javascript we usually use variables assigning them the value of the input text doing something like this: 
+   `let v=document.getElementById("whatever").value`.  But ***in react every input must be controlled by an state***. When we put atribute ***value*** as usual we have done in ordinary html/javascript ...
 
 ```jsx
  return (
@@ -95,15 +88,17 @@ In browser we can see something like this, by the moment:
 > *Warning: You provided a `value` prop to a form field without an `onChange` handler. This will render a read-only field. If the field should be mutable use `defaultValue`. Otherwise, set either `onChange` or `readOnly`.
 >     at input*
 
-It says that if we put a property ***value*** without an ***onChange*** handler:
+It says that if we've put a property ***value*** without an ***onChange*** handler:
 
 - This will render a read-only field. We can't write on it. 
 
 - It recommends to use defaultValue instead if it's going to be "mutable". 
 
-But if we want that React controls our form it's recommended tu use onChange in orther to get in real time the state of this value. This implies that also we must define state. 
+But if we want that React controls our form it's recommended tu use onChange in orther to get in real time the state of this value. This implies that also we must define an state. 
 
-Thinking in all of these arguments this is how code should go on by the moment:
+<mark>In other words: ***In react every input must be controlled by an <u>state</u>***</mark>
+
+### How to control an input by an state with React.
 
 ##### */src/components/TasksForm.js*
 
@@ -130,8 +125,6 @@ const TasksForm = () => {
 };
 
 export default TasksForm;
-
-
 ```
 
 What have I done
@@ -139,22 +132,21 @@ What have I done
 - ***LOOK HERE 1***
   I have imported **useState** library because this form require control changes of state in real time. ("It must react").
   `import React, { Fragment, useState } from "react";`
-  
 
 - ***LOOK HERE 2***
   I have defined the state of the variable that is going to vary, as the user writes, which is the value of the input. I called this variable **taskIntro**. Therefore the code to define the state is:
   `const [taskIntro, setTaskIntro] = useState("");`
-  
 
 - ***LOOK HERE 3***
-  I've created a function, that I've called "***settingTask***"  in order to capture the event of "changing the value of the input" as it follows: 
+  I've created a function, that I've called "***settingTask***"  in order to capture the event and update the "changing value of the input" as it follows: 
   `const settingTask = (e) => { /* LOOK HERE 3 */
    setTaskIntro(e.target.value);
    };`
-  
 
 - ***LOOK HERE 4***
   Now It can be able to write ***value={taskIntro}*** (that links with ***LOOK HERE 2***) and by other hand ***onChange={settingTask}*** that it calls to the function we've created on ***LOOK HERE 3***
-  
+  `<input type="text" value={taskIntro} onChange={settingTask} />`
 
-***It's imperative we do this 4 things in order to capture the value of an input field in React. *** 
+#### RESUME
+
+***It's imperative we do all this 4 things in order to capture the value of an input field in React. *** 
