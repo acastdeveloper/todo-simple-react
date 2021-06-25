@@ -174,7 +174,6 @@ What have I done
     ##### /src/App.js
 
 ```jsx
-
 import React, { Fragment, useState } from "react"; /* LOOK HERE 1 */
 
 import TasksForm from "./components/TasksForm";
@@ -196,8 +195,6 @@ const App = () => {
 };
 
 export default App;
-
-
 ```
 
 #### Explanation of what have I done:
@@ -214,8 +211,6 @@ export default App;
    };`
 
 - <mark>LOOK HERE 4</mark>: What does it means `passTask={newTask}`? sendTask is a **prop** that it's sent from the component ***TasksForm*** that calls to the function ***newTask*** that I've declared on *LOOK HERE 3*. 
-
-
 
 ## Connecting TasksForm.js with App.js, by mean props, in order to pass tasks.
 
@@ -238,7 +233,6 @@ const TasksForm = (props) => { /* LOOK HERE 1 */
   };
 
   const submitTask = (event) => {
-    setTaskIntro(event.target.value);
     event.preventDefault();
     props.passTask(taskIntro); /* LOOK HERE 2 */
     setTaskIntro(""); /* LOOK HERE 3 */
@@ -256,22 +250,125 @@ const TasksForm = (props) => { /* LOOK HERE 1 */
 };
 
 export default TasksForm;
-
-
 ```
 
 #### EXPLANATION OF WHAT HAVE I DONE
 
 - <mark>LOOK HERE 1</mark>: Between the rounded brackets of the component I've writed **props** in order to declare that I'm going to use **props**. 
   `const TasksForm = (props) => { `...
-  
 
 - <mark>LOOK HERE 2</mark>: I declare the prop **passTask**, that is waited on controller component **App.js** (Remember 10. LOOK HERE 4 ), and I put as parameter the variable of state **taskIntro** in order to pass what user writes.
   `props.passTask(taskIntro);` 
-  
 
 - <mark>LOOK HERE 3</mark>: I reset variable of state **taskIntro**, by mean code: 
   `setTaskIntro("");`
   And as we see Input text it's empty again.
 
+## Avoiding submit empty field "taskIntro"
+
+12. I want to avoid to submit an empty **taskIntro**. Therefore we are doing a little of validation on submitTask function on TasksForm.js as it follows:
+
+```jsx
+const submitTask = (event) => {
+    event.preventDefault();
+    if (taskIntro.trim()!=="") {
+      props.passTask(taskIntro);
+      setTaskIntro("");
+    }
+  };
+```
+
+I use a conditional that only let send the prop passTask to the function **submitTask** only in the case that taskIntro is not empty. 
+
+## Giving feedback to the user if validation fails.
+
+13. We should warn the user if field **taskIntro** is empty in case user tries to submit form, accidentaly or not, by clicking on button "Add".
+    
+    In order to do that the strategy I follow consists in create another variable of state that says if field is empty or not. I call it "***emptyTaskIntro***". Therefore I declare this variable of state as it follows: 
+    `const [emptyTaskIntro, setEmptyTaskIntro] = useState(true);` 
+    
+    Finally code of **TasksForm.js** looks so:
+
+```jsx
+import React, { Fragment, useState } from "react";
+
+const TasksForm = (props) => {
+  const [taskIntro, setTaskIntro] = useState([]);
+  const [emptyTaskIntro, setEmptyTaskIntro] = useState(true); /* LOOK HERE 1 */
+  const [counter, setCounter] = useState(0); /* LOOK HERE 2 */
+
+  const settingTask = (e) => {
+    setTaskIntro(e.target.value);
+  };
+
+  const submitTask = (event) => {
+    event.preventDefault();
+    if (taskIntro.toString().trim() !== "") { /* LOOK HERE 3 */
+      setEmptyTaskIntro(false); /* LOOK HERE 4 */
+      props.passTask(taskIntro.toString().trim()); /* LOOK HERE 5 */
+      setTaskIntro("");
+    } else {
+      setEmptyTaskIntro(true); /* LOOK HERE 6 */
+    }
+    setCounter(counter + 1); /* LOOK HERE 7 */
+  };
+
+  return (
+    <Fragment>
+      <form onSubmit={submitTask}>
+        <span>Add task: </span>
+        <input type="text" value={taskIntro} onInput={settingTask} />
+        <button>Add</button>
+        <br />
+        {emptyTaskIntro === true && counter > 0 && (
+          <span> Add a task, please</span>
+        )}
+        {/* LOOK HERE 8 */}
+
+      </form>
+    </Fragment>
+  );
+};
+
+export default TasksForm;
+
+
+```
+
+#### WHAT HAVE I DONE
+
+- <mark>LOOK HERE 1</mark>: In order to control when **taskIntro** is empty or not we declare variable of state **emptyTaskIntro** as it follows:
+  `const [emptyTaskIntro, setEmptyTaskIntro] = useState(true);`
+  being its initial state empty, that's why we use default value as the boolean **true**.
   
+
+- <mark>LOOK HERE 3</mark>: I have had to redefine the conditional adding `toString()` because React warned me that trim was not recognizable. That is because for some reason the Javascript interpreter doesn't know what kind of variable is **taskIntro** and trim() only runs with strings. That's why I've added toString(), to ensure there is not problem. 
+  
+
+- <mark>LOOK HERE 4</mark>: Once we know that **taskIntro** is not empty we set **emptyTaskIntro** to false. That means that is not empty.
+  
+
+- <mark>LOOK HERE 5</mark>: I have refactorized the prop statement to:
+  `props.passTask(taskIntro.toString().trim());`
+  because I want to ensure that the task I send in this prop is a String(***toString()***) without inicial or final empty spaces(***trim()***). 
+  
+
+- <mark>LOOK HERE 6</mark>: We set **emptyTaskIntro**, *variable of state*, because it detects that it's empty field **taskIntro**.
+  
+
+-  <mark>LOOK HERE 2</mark>: I've added another *variable of state*, **counter**, in order to know if form has been already submitted or not. By default counter is setted to zero that means that never has been submited before. Why? The answer is in **LOOK HERE 8**
+   `const [counter, setCounter] = useState(0);` 
+   
+
+- <mark>LOOK HERE 7</mark>: Every time that user activates the **submitTask()** function, the variable of state **counter** will be setted increasing 1 (counter+1). 
+  
+
+- <mark>LOOK HERE 8</mark>: In return statement, with the help of a *ternary operator*, we do a conditional rendering with the code:
+
+```jsx
+{emptyTaskIntro === true && counter > 0 && (
+          <span> Add a task, please.</span>
+        )}
+```
+
+**What does it mean this code**? Translation to English: "If **taskIntro** is empty and it's not the first time that user had clicked on the submit button **Add** `<span>Add a task, please.</span>`" 
