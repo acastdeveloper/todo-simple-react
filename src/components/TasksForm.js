@@ -9,15 +9,16 @@ const TasksForm = (props) => {
   };
 
   const submitTask = (event) => {
-    setTaskIntro(event.target.value);
     event.preventDefault();
-    props.passTask(taskIntro);
-    setTaskIntro("");
+    if (taskIntro.trim()!=="") {
+      props.passTask(taskIntro);
+      setTaskIntro("");
+    }
   };
 
   return (
     <Fragment>
-      <form  onSubmit={submitTask}>
+      <form onSubmit={submitTask}>
         <span>Add task: </span>
         <input type="text" value={taskIntro} onInput={settingTask} />
         <button>Add</button>

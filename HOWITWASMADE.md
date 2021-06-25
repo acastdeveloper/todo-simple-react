@@ -174,7 +174,6 @@ What have I done
     ##### /src/App.js
 
 ```jsx
-
 import React, { Fragment, useState } from "react"; /* LOOK HERE 1 */
 
 import TasksForm from "./components/TasksForm";
@@ -196,8 +195,6 @@ const App = () => {
 };
 
 export default App;
-
-
 ```
 
 #### Explanation of what have I done:
@@ -214,8 +211,6 @@ export default App;
    };`
 
 - <mark>LOOK HERE 4</mark>: What does it means `passTask={newTask}`? sendTask is a **prop** that it's sent from the component ***TasksForm*** that calls to the function ***newTask*** that I've declared on *LOOK HERE 3*. 
-
-
 
 ## Connecting TasksForm.js with App.js, by mean props, in order to pass tasks.
 
@@ -238,7 +233,6 @@ const TasksForm = (props) => { /* LOOK HERE 1 */
   };
 
   const submitTask = (event) => {
-    setTaskIntro(event.target.value);
     event.preventDefault();
     props.passTask(taskIntro); /* LOOK HERE 2 */
     setTaskIntro(""); /* LOOK HERE 3 */
@@ -256,22 +250,32 @@ const TasksForm = (props) => { /* LOOK HERE 1 */
 };
 
 export default TasksForm;
-
-
 ```
 
 #### EXPLANATION OF WHAT HAVE I DONE
 
 - <mark>LOOK HERE 1</mark>: Between the rounded brackets of the component I've writed **props** in order to declare that I'm going to use **props**. 
   `const TasksForm = (props) => { `...
-  
 
 - <mark>LOOK HERE 2</mark>: I declare the prop **passTask**, that is waited on controller component **App.js** (Remember 10. LOOK HERE 4 ), and I put as parameter the variable of state **taskIntro** in order to pass what user writes.
   `props.passTask(taskIntro);` 
-  
 
 - <mark>LOOK HERE 3</mark>: I reset variable of state **taskIntro**, by mean code: 
   `setTaskIntro("");`
   And as we see Input text it's empty again.
 
-  
+## Avoiding submit empty field "taskIntro"
+
+12. I want to avoid to submit an empty **taskIntro**. Therefore we are doing a little of validation on submitTask function on TasksForm.js as it follows:
+
+```jsx
+const submitTask = (event) => {
+    event.preventDefault();
+    if (taskIntro.trim()!=="") {
+      props.passTask(taskIntro);
+      setTaskIntro("");
+    }
+  };
+```
+
+I use a conditional that only let send the prop passTask to the function **submitTask** only in the case that taskIntro is not empty. 
