@@ -331,8 +331,6 @@ const TasksForm = (props) => {
 };
 
 export default TasksForm;
-
-
 ```
 
 #### WHAT HAVE I DONE
@@ -340,28 +338,21 @@ export default TasksForm;
 - <mark>LOOK HERE 1</mark>: In order to control when **taskIntro** is empty or not we declare variable of state **emptyTaskIntro** as it follows:
   `const [emptyTaskIntro, setEmptyTaskIntro] = useState(true);`
   being its initial state empty, that's why we use default value as the boolean **true**.
-  
 
 - <mark>LOOK HERE 3</mark>: I have had to redefine the conditional adding `toString()` because React warned me that trim was not recognizable. That is because for some reason the Javascript interpreter doesn't know what kind of variable is **taskIntro** and trim() only runs with strings. That's why I've added toString(), to ensure there is not problem. 
-  
 
 - <mark>LOOK HERE 4</mark>: Once we know that **taskIntro** is not empty we set **emptyTaskIntro** to false. That means that is not empty.
-  
 
 - <mark>LOOK HERE 5</mark>: I have refactorized the prop statement to:
   `props.passTask(taskIntro.toString().trim());`
   because I want to ensure that the task I send in this prop is a String(***toString()***) without inicial or final empty spaces(***trim()***). 
-  
 
 - <mark>LOOK HERE 6</mark>: We set **emptyTaskIntro**, *variable of state*, because it detects that it's empty field **taskIntro**.
-  
 
--  <mark>LOOK HERE 2</mark>: I've added another *variable of state*, **counter**, in order to know if form has been already submitted or not. By default counter is setted to zero that means that never has been submited before. Why? The answer is in **LOOK HERE 8**
-   `const [counter, setCounter] = useState(0);` 
-   
+- <mark>LOOK HERE 2</mark>: I've added another *variable of state*, **counter**, in order to know if form has been already submitted or not. By default counter is setted to zero that means that never has been submited before. Why? The answer is in **LOOK HERE 8**
+  `const [counter, setCounter] = useState(0);` 
 
 - <mark>LOOK HERE 7</mark>: Every time that user activates the **submitTask()** function, the variable of state **counter** will be setted increasing 1 (counter+1). 
-  
 
 - <mark>LOOK HERE 8</mark>: In return statement, with the help of a *ternary operator*, we do a conditional rendering with the code:
 
@@ -372,3 +363,84 @@ export default TasksForm;
 ```
 
 **What does it mean this code**? Translation to English: "If **taskIntro** is empty and it's not the first time that user had clicked on the submit button **Add** `<span>Add a task, please.</span>`" 
+
+## LISTING TASKS
+
+14. Now I want to show all the tasks that user has submitted. For this purpose I create **TaskLister.js** in ***/src/components/TaskLister.js*** with this code, by the moment:
+
+##### /src/components/TaskLister.js
+
+```jsx
+import React, { Fragment} from 'react'
+
+const TasksLister = (props) => { /* LOOK HERE 1 */
+    return (
+        <Fragment>
+            <div>
+            <span>{props.passTask}</span> - <span>Edit</span> <span>Delete</span>
+            </div>
+            { /* LOOK HERE 2*/}
+        </Fragment>
+    )
+}
+
+export default TasksLister;
+
+
+```
+
+##### WHAT HAVE I DONE?
+
+- <mark>LOOK HERE 1</mark>: I've prepared this component to receive a prop from the controller **App.js** ...
+  
+
+- <mark>LOOK HERE 2</mark>: ... that will be rendered between these span tags: 
+  `{props.passTask}`
+  
+
+But, we have not finished yet. We need to do the other side of the bridge. We go to the controller component, **App.js** and we place this code: 
+
+```jsx
+{ listTasks.map(el=><TasksLister passTask={el} key={el} />) }
+```
+
+###### /src/App.js
+
+```jsx
+import React, { Fragment, useState } from "react";
+
+import TasksForm from "./components/TasksForm";
+
+import TasksLister from "./components/TasksLister";
+
+const App = () => {
+  const [listTasks, setListTasks] = useState([]);
+
+  const newTask = (task) => {
+    setListTasks([task, ...listTasks]);
+  };
+
+  return (
+    <Fragment>
+      <TasksForm passTask={newTask} />
+      {listTasks.map((el) => (
+        <TasksLister passTask={el} key={el} /> {/* LOOK HERE */}
+      ))}
+    </Fragment>
+  );
+};
+
+export default App;
+
+
+```
+
+##### WHAT HAVE I DONE?
+
+- I take the *variable of state* **listTasks** that, remember, it's an array.
+
+- And I apply the **map** methode to iterate every element (***el***) of the ***listTasks*** array in order to render a component **TasksLister** for every element (***el***). 
+
+- To every TaskLister component i pass a prop, that I've called **passTask** with the element (***el***) as a value in order to render it in the **TasksLister.js** in its**<mark>LOOKS HERE 2</mark>**.
+
+- By other hand in React when we generate a list(and array in this case) of virtual elements, by mean a map methode, React send us **wargings** that says that every element of this virtual list must have a key. That's why I've used `key={el}`.
