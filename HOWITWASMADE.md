@@ -98,7 +98,7 @@ But if we want that React controls our form it's recommended tu use onChange in 
 
 <mark>In other words: ***In react every input must be controlled by an <u>state</u>***</mark>
 
-### How to control an input by an state with React.
+### How to control an input by an state with React in order to get and handle its value
 
 ##### */src/components/TasksForm.js*
 
@@ -149,4 +149,129 @@ What have I done
 
 #### RESUME
 
-***It's imperative we do all this 4 things in order to capture the value of an input field in React. *** 
+***It's imperative we do all this 4 things in order to capture the value of an input field in React. ***
+
+---
+
+## Defining the listing tasks function on App.js
+
+10. Now we need to create a function that list all the tasks that user writes in the component ***TaksForm***. 
+    
+    We  locate this function in ***App.js***. 
+    
+    Why?
+    
+    Because we work with phylosophy of modularize what every component does (one component - one purpose) in order to do components more reusable and versatile.
+    
+    But by other hand **App.js** is the main component(by default) in React and its purpose is to controll what children components does. 
+    
+    *[In Java we would call it "the controller" and its name would be "Main.class". in react this controller is called, by default, **App.js** (but we can change its name if we want).]* 
+    
+    ---
+    
+    After these considerations code on App.js will be as it follows:
+    
+    ##### /src/App.js
+
+```jsx
+
+import React, { Fragment, useState } from "react"; /* LOOK HERE 1 */
+
+import TasksForm from "./components/TasksForm";
+
+const App = () => {
+  const [listTasks, setListTasks] = useState([]); /* LOOK HERE 2 */
+
+  const newTask = (task) => {                    /* LOOK HERE 3 */
+    setListTasks([task, ...listTasks]);
+  };
+
+  return (
+    <Fragment>
+      <TasksForm
+        passTask={newTask}                      {/* LOOK HERE 4 */}          
+      />
+    </Fragment>
+  );
+};
+
+export default App;
+
+
+```
+
+#### Explanation of what have I done:
+
+- <mark>LOOK HERE 1</mark>: I import  **useState** hook in order to be "reactive" to changes. What changes? The produced changes everytime that a task is added to the ***listTasks***, that we declare on LOOK HERE 2.
+  `import React, { Fragment, useState } from "react";`
+
+- <mark>LOOK HERE 2</mark>: I declare the ***variable of state***, that I call ***listTasks***, and I define the initial state as an array by writing []. Why? To be able to add every update that user does on a list. We are not capturing in this *variable of state* a singular value but a collection, a list, of values. Therefore the more convenient way for the purpose of list values is by mean an array.
+  `const [listTasks, setListTasks] = useState([]);`
+
+- <mark>LOOK HERE 3</mark>: I create a function (I've called it ***newTask***) to update every task user adds on the variable of state ***listTasks***. 
+  `const newTask = (task) => { /* LOOK HERE 3 */
+   setListTasks([task, ...listTasks]);
+   };`
+
+- <mark>LOOK HERE 4</mark>: What does it means `passTask={newTask}`? sendTask is a **prop** that it's sent from the component ***TasksForm*** that calls to the function ***newTask*** that I've declared on *LOOK HERE 3*. 
+
+
+
+## Connecting TasksForm.js with App.js, by mean props, in order to pass tasks.
+
+> ***Props are the way to communicate depending components.***
+
+11. In previous step, on LOOK HERE 4, I've prepared a **prop** to be able to receive what user writes in ***TasksForm.js*** component in order to be used by the controller component **App.js**. 
+    
+    But we also need "to build the bridge" from the other side. In other words, we need to declare Props, and send them by mean a function, in the component **TasksForm.js**. How? As it follows:
+
+##### /src/TasksForm.js
+
+```jsx
+import React, { Fragment, useState } from "react";
+
+const TasksForm = (props) => { /* LOOK HERE 1 */
+  const [taskIntro, setTaskIntro] = useState([]);
+
+  const settingTask = (e) => {
+    setTaskIntro(e.target.value);
+  };
+
+  const submitTask = (event) => {
+    setTaskIntro(event.target.value);
+    event.preventDefault();
+    props.passTask(taskIntro); /* LOOK HERE 2 */
+    setTaskIntro(""); /* LOOK HERE 3 */
+  };
+
+  return (
+    <Fragment>
+      <form onSubmit={submitTask}>
+        <span>Add task: </span>
+        <input type="text" value={taskIntro} onInput={settingTask} />
+        <button>Add</button>
+      </form>
+    </Fragment>
+  );
+};
+
+export default TasksForm;
+
+
+```
+
+#### EXPLANATION OF WHAT HAVE I DONE
+
+- <mark>LOOK HERE 1</mark>: Between the rounded brackets of the component I've writed **props** in order to declare that I'm going to use **props**. 
+  `const TasksForm = (props) => { `...
+  
+
+- <mark>LOOK HERE 2</mark>: I declare the prop **passTask**, that is waited on controller component **App.js** (Remember 10. LOOK HERE 4 ), and I put as parameter the variable of state **taskIntro** in order to pass what user writes.
+  `props.passTask(taskIntro);` 
+  
+
+- <mark>LOOK HERE 3</mark>: I reset variable of state **taskIntro**, by mean code: 
+  `setTaskIntro("");`
+  And as we see Input text it's empty again.
+
+  
