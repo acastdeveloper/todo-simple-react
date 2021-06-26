@@ -23,13 +23,13 @@ const TasksForm = (props) => {
 
   return (
     <Fragment>
-      <form onSubmit={submitTask}>
-        <span>Add task: </span>
+      <form onSubmit={submitTask} className="container" >
+        <span>TO DO: </span>
         <input type="text" value={taskIntro} onInput={settingTask} />
-        <button>Add</button>
+        <button>+</button>
         <br />
         {emptyTaskIntro === true && counter > 0 && (
-          <span> Add a task, please.</span>
+          <div className="validation"> Add a task, please.</div>
         )}
       </form>
     </Fragment>

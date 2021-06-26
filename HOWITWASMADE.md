@@ -385,18 +385,14 @@ const TasksLister = (props) => { /* LOOK HERE 1 */
 }
 
 export default TasksLister;
-
-
 ```
 
 ##### WHAT HAVE I DONE?
 
 - <mark>LOOK HERE 1</mark>: I've prepared this component to receive a prop from the controller **App.js** ...
-  
 
 - <mark>LOOK HERE 2</mark>: ... that will be rendered between these span tags: 
   `{props.passTask}`
-  
 
 But, we have not finished yet. We need to do the other side of the bridge. We go to the controller component, **App.js** and we place this code: 
 
@@ -431,8 +427,6 @@ const App = () => {
 };
 
 export default App;
-
-
 ```
 
 ##### WHAT HAVE I DONE?
@@ -443,4 +437,4 @@ export default App;
 
 - To every TaskLister component i pass a prop, that I've called **passTask** with the element (***el***) as a value in order to render it in the **TasksLister.js** in its**<mark>LOOKS HERE 2</mark>**.
 
-- By other hand in React when we generate a list(and array in this case) of virtual elements, by mean a map methode, React send us **wargings** that says that every element of this virtual list must have a key. That's why I've used `key={el}`.
+- By other hand in React when we generate a list(an array in this case) of virtual elements, by mean a map methode, React send us **wargings** that says that every element of this virtual list must have a key. That's why I've used `key={el}`.
