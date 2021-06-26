@@ -438,3 +438,11 @@ export default App;
 - To every TaskLister component i pass a prop, that I've called **passTask** with the element (***el***) as a value in order to render it in the **TasksLister.js** in its**<mark>LOOKS HERE 2</mark>**.
 
 - By other hand in React when we generate a list(an array in this case) of virtual elements, by mean a map methode, React send us **wargings** that says that every element of this virtual list must have a key. That's why I've used `key={el}`.
+
+## STYLIZING
+
+15. I have added some styles. 
+    
+    1. I import a style sheet in **App.js** from a folder that I've created **/src/assets/css/style.css**.
+    
+    2. And I apply className to different elements of the jsx files. Better look by yourself.
